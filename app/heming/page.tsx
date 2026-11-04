@@ -108,37 +108,9 @@ export default function HemingPage() {
       setChartA(cA);
       setChartB(cB);
 
-      const res = await fetch('/api/heming', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chartA: cA, chartB: cB, question: q ?? undefined }),
-      });
-      if (res.status === 404) { setApiMissing(true); throw new Error('api-missing'); }
-      if (!res.ok || !res.body) throw new Error();
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let text = '';
-      let pendingLine = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        pendingLine += decoder.decode(value, { stream: true });
-        const lines = pendingLine.split('\n');
-        pendingLine = lines.pop() ?? '';
-        for (const rawLine of lines) {
-          const line = rawLine.endsWith('\r') ? rawLine.slice(0, -1) : rawLine;
-          if (!line.startsWith('data: ')) continue;
-          const data = line.slice(6);
-          if (data === '[DONE]') break;
-          try {
-            const delta = JSON.parse(data).delta?.text ?? '';
-            text += delta;
-            setAnalysis(text);
-          } catch { /* skip */ }
-        }
-      }
+      // Offline compatibility: keep generating both charts, no service request.
+      setApiMissing(false);
+      setAnalysis('Đã lập hai lá số bằng thuật toán cục bộ. Chưa có quy tắc hợp bàn đã kiểm thử; không tạo điểm tương hợp hoặc trả lời dự báo. Xem từng lá số tại trang lập báo cáo tiếng Việt.');
       // scroll to analysis
       setTimeout(() => analysisRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
     } catch {
@@ -196,7 +168,7 @@ export default function HemingPage() {
             紫微合盘
           </h1>
           <p style={{ fontSize: '13px', color: 'var(--tx-3)', lineHeight: 1.6 }}>
-            输入两个人的出生信息，AI 基于倪海厦体系分析双方命盘的缘分匹配度、感情走向与相处建议
+            Lập hai lá số cục bộ để đối chiếu; chưa có quy tắc dự báo tương hợp.
           </p>
         </div>
 
@@ -244,7 +216,7 @@ export default function HemingPage() {
             <div style={{ textAlign: 'center', padding: '32px 0' }}>
               <div style={{ fontSize: '13px', color: 'var(--tx-3)', marginBottom: '24px', lineHeight: 1.7 }}>
                 填好双方出生信息后，点击下方按钮<br />
-                AI 将基于倪海厦体系深度分析两人缘分匹配度
+                Chỉ lập hai lá số; không tạo dự báo tương hợp.
               </div>
               <button
                 onClick={() => runAnalysis()}
@@ -285,78 +257,14 @@ export default function HemingPage() {
           {analysisError && (
             <div style={{ padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--bdr)', background: 'var(--bg-card)', fontSize: '13px', color: 'var(--tx-2)', marginTop: '12px' }}>
               {apiMissing
-                ? '开源版不含合盘 AI 分析接口（/api/heming），需要你自己实现后才能用。两人的命盘可以分别到「排盘」页（/chart）查看。'
+                ? 'Chưa có quy tắc hợp bàn đã kiểm thử.'
                 : '分析暂时不可用，请重试。'}
             </div>
           )}
         </div>
 
-        {/* ═══ 针对合盘的追问聊天框（仅分析完成后显示）═══════════ */}
-        {analysis && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px' }}>
-            <div style={{ fontSize: '11px', letterSpacing: '0.2em', color: 'var(--tx-3)', marginBottom: '4px' }}>
-              针对此次合盘继续追问
-            </div>
+        {analysis && <p style={{marginTop:24}}><a href="/">Lập báo cáo tiếng Việt cho từng người →</a></p>}
 
-            {/* 快捷问题 */}
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              {[
-                '感情匹配度如何？',
-                '适合合伙创业吗？',
-                '两人结婚是否合适？',
-                '哪方面最容易产生矛盾？',
-                '财运是否互补？',
-              ].map(q => (
-                <button
-                  key={q}
-                  onClick={() => { setQuestion(q); runAnalysis(q); }}
-                  disabled={analyzing}
-                  style={{
-                    fontSize: '12px', padding: '6px 14px',
-                    borderRadius: 'var(--r-pill)',
-                    border: '1px solid var(--bdr-med)',
-                    background: 'transparent', color: 'var(--tx-2)',
-                    cursor: analyzing ? 'not-allowed' : 'pointer',
-                    opacity: analyzing ? 0.5 : 1,
-                    transition: 'border-color 0.15s',
-                  }}
-                  onMouseEnter={e => { if (!analyzing) (e.currentTarget as HTMLElement).style.borderColor = 'var(--ac-bdr)'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--bdr-med)'; }}
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
-
-            {/* 输入框 + 追问按钮 */}
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input
-                type="text"
-                value={question}
-                onChange={e => setQuestion(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter' && !analyzing) runAnalysis(question || undefined); }}
-                placeholder="继续追问，如：哪几年是两人感情关键期？"
-                disabled={analyzing}
-                className="input-base"
-                style={{ fontSize: '13px', flex: 1 }}
-              />
-              <button
-                onClick={() => runAnalysis(question || undefined)}
-                disabled={analyzing}
-                style={{
-                  padding: '10px 20px', borderRadius: 'var(--r-sm)', border: 'none',
-                  background: analyzing ? 'var(--bg-2)' : 'var(--tx-0)',
-                  color: analyzing ? 'var(--tx-3)' : 'white',
-                  fontSize: '13px', fontWeight: 500,
-                  cursor: analyzing ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.15s', whiteSpace: 'nowrap',
-                }}
-              >
-                {analyzing ? '分析中…' : '继续追问'}
-              </button>
-            </div>
-          </div>
-        )}
       </div>
 
       <style>{`

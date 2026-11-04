@@ -1,0 +1,49 @@
+name: Build Vietnamese MVP (no deployment)
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm run test:vi
+      - name: Verify preserved Next.js routes
+        run: npm run build
+      - run: npm run build:vi
+      - name: Install browser for end-to-end tests
+        run: npx playwright install --with-deps chromium
+      - name: Download only one pinned public year for integration test
+        run: curl --fail --location --retry 2 https://github.com/Renhuai123/ziwei-doushu/releases/download/v4.0-13d/year-2005.jsonl.zst --output "$RUNNER_TEMP/year-2005.jsonl.zst"
+      - name: Verify real long-window data and reject tampering
+        run: npm run test:v4
+        env:
+          V4_TEST_FILE: ${{ runner.temp }}/year-2005.jsonl.zst
+          V4_TEST_YEAR: "2005"
+      - name: Browser PDF, mobile and local data import
+        run: npm run test:browser
+        env:
+          V4_TEST_FILE: ${{ runner.temp }}/year-2005.jsonl.zst
+          V4_TEST_YEAR: "2005"
+      - name: Downloadable static website package (not published)
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-tieng-viet
+          path: dist/
+          retention-days: 14
+      - name: Synthetic sample report and UI screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bao-cao-va-kiem-thu-minh-hoa
+          path: artifacts/
+          retention-days: 14
