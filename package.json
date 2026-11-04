@@ -14,7 +14,9 @@
     "prebuild": "npm run build:worker",
     "test:vi": "node --import tsx scripts/vi/test.ts",
     "test:v4": "node --import tsx scripts/vi/test-v4.ts",
-    "test:browser": "node scripts/vi/browser-test.mjs"
+    "test:browser": "node scripts/vi/browser-test.mjs",
+    "test:content": "node --import tsx scripts/vi/content-test.ts",
+    "audit:content": "node --import tsx scripts/vi/audit-content.ts"
   },
   "dependencies": {
     "@hpcc-js/wasm-zstd": "1.17.0",

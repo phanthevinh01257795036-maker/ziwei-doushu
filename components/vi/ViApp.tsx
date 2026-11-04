@@ -1,4 +1,8 @@
 "use client";
+import {
+  MAJOR_GLOSSARY,
+  MAJOR_GLOSSARY_NOTE,
+} from "../../content/vi/major-glossary";
 import React, { useState } from "react";
 import { normalizeBirth } from "../../lib/report/time";
 import { buildFacts } from "../../lib/report/facts";
@@ -701,6 +705,11 @@ export default function ViApp({ assetBase = "/" }: { assetBase?: string }) {
                   LÁ SỐ ĐÃ LẬP • BẢNG {report.facts.school}
                 </p>
                 <h2>Báo cáo của bạn</h2>
+                <p className="vi-note">
+                  Bản nội dung chưa đầy đủ. Số chủ đề có nhận định không phải tỷ
+                  lệ luận giải hoàn chỉnh. Các đoạn kiến thức chung không được
+                  tính thành kết luận cá nhân.
+                </p>
                 <p>
                   {report.coverage.topicsWithText}/{report.coverage.topics} chủ
                   đề có nhận định khớp điều kiện · {report.coverage.applicable}/
@@ -922,6 +931,19 @@ export default function ViApp({ assetBase = "/" }: { assetBase?: string }) {
             </article>
             <article className="vi-card vi-topic">
               <h3>Tư liệu v4.0 và giới hạn</h3>
+              <details>
+                <summary>
+                  Từ khóa Việt–Trung của 14 chính tinh — kiến thức chung
+                </summary>
+                <p>{MAJOR_GLOSSARY_NOTE}</p>
+                <ul>
+                  {MAJOR_GLOSSARY.map((s) => (
+                    <li key={s.star}>
+                      <b>{s.nameVi}</b>: {s.textVi} ({s.original})
+                    </li>
+                  ))}
+                </ul>
+              </details>
               {datasetMessage && (
                 <p role="status" className="vi-note">
                   {datasetMessage}

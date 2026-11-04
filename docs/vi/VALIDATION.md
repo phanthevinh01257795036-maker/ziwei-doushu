@@ -36,3 +36,12 @@ Bao gồm npm ci, typecheck, test:vi, **build Next.js giữ các route cũ**, bu
 - Không bảo đảm đọc tệp năm trên mọi điện thoại yếu; có giới hạn RAM, timeout và lỗi minh bạch.
 - Không coi tính đúng của phép trích xuất/quy tắc hình thức là bằng chứng khoa học cho dự đoán tử vi.
 - Chưa triển khai website công khai vì chủ repository chưa cho phép. Bàn giao PR, gói tĩnh, hướng dẫn và PDF minh họa.
+
+## Bổ sung kiểm soát nội dung — vi-rules-1.1.0
+
+- Ma trận hiện có 17/168 ô chính tinh–cung với ít nhất một quy tắc; không coi đó là độ bao phủ đầy đủ tổ hợp.
+- Chặn điều kiện tọa thủ danh sách rỗng, sao/cung không hợp lệ, độ sáng rỗng và Tứ Hóa không tồn tại trước khi đánh giá cá nhân.
+- Thêm kiểm tra không áp dụng Thiên Lương Hóa Kỵ / Thất Sát Hóa Lộc; sửa các câu sai đã biết ở tư liệu giao diện cũ. Không tuyên bố toàn bộ tư liệu cũ đã được hiệu đính.
+- Thêm 14 mục từ khóa Việt–Trung đúng nguyên văn constants.ts, chỉ là kiến thức chung, không tính thành 14 quy tắc cá nhân.
+- Report.interpretationComplete luôn false ở phiên bản này; nhãn chưa đầy đủ hiện trong website/PDF/Markdown.
+- Typecheck, kiểm thử nội dung, kiểm thử MVP và hồ sơ riêng đạt. Chromium kiểm lại tải PDF/mobile/không yêu cầu ra ngoài đạt. PDF mẫu mới 24 trang A4, kiểm độc lập không trang trắng bất thường, ký tự thay thế hoặc văn bản tràn trang.

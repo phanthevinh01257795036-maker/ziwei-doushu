@@ -92,7 +92,8 @@ export function interpret(
         `${s.title}: có ${s.paragraphs.length} nhận định khớp điều kiện; xem dẫn chứng tại mục tương ứng.`,
     );
   return {
-    version: "report-1.0.0",
+    version: "report-1.1.0",
+    interpretationComplete: false,
     facts,
     sections,
     assessments,
@@ -121,6 +122,7 @@ export function markdownReport(r: Report): string {
   const f = r.facts;
   return [
     "# Báo cáo Tử Vi Đẩu Số",
+    "**BẢN NỘI DUNG CHƯA ĐẦY ĐỦ. Có nhận định cho một chủ đề không có nghĩa đã luận đủ mọi tổ hợp của chủ đề đó.**",
     `Phiên bản: ${r.version}; ${f.algorithmVersion}; ${f.contentVersion}; bảng ${f.school}.`,
     `Ngày lập lá số: ${f.normalized.chartDate.year}-${f.normalized.chartDate.month}-${f.normalized.chartDate.day}; giờ ${BRANCHES_VI[f.normalized.branch]}.`,
     `Độ bao phủ: ${r.coverage.topicsWithText}/${r.coverage.topics} chủ đề có nhận định; 0 bản ghi v4.0 được tuyên bố dịch đầy đủ.`,

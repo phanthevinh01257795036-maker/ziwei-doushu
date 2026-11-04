@@ -21,3 +21,11 @@ Số bản ghi dịch đầy đủ được công bố: 0. Không đưa bản d�
 ## Mở rộng sau MVP
 
 Cần thêm thẩm định chuyên môn, quy tắc cho nhiều tổ hợp, địa danh Việt Nam có nguồn, kiểm thử múi giờ vùng lịch sử và quy tắc vận hạn được kiểm chứng. Không nâng con số bao phủ bằng cách tạo template chung gắn với mọi sao/cung.
+
+## Kiểm kê mức độ đầy đủ (bổ sung sau MVP)
+
+`npm run test:content` kiểm tra cấu trúc điều kiện và những Tứ Hóa không tồn tại. `npm run audit:content` xuất `artifacts/coverage-audit.json`: ma trận **14 chính tinh × 12 cung = 168 ô**. Hiện mới **17/168 ô** có ít nhất một quy tắc điều kiện. Một ô có quy tắc không đồng nghĩa mọi tổ hợp, độ sáng và hội chiếu trong ô đó đã được luận đủ. Các tổ hợp nhiều sao, phụ/sát, vận hạn cần kiểm kê riêng trước khi tuyên bố hoàn tất.
+
+`Report.interpretationComplete` hiện cố định `false`. PDF, Markdown và giao diện nêu rõ nội dung chưa đầy đủ, kể cả khi một hồ sơ có nhận định ở đủ các chủ đề. Không đổi cờ này bằng cách điền đủ tiêu đề hoặc thêm từ điển 14 sao. Từ điển Việt–Trung mới chỉ dịch các từ khóa thực trong constants.ts, được trình bày như kiến thức chung, không tính vào số nhận định cá nhân.
+
+Tư liệu cũ StarDetailPanel có các câu sai bảng Tứ Hóa (Thiên Lương Hóa Kỵ, Thất Sát Hóa Lộc) và nhầm tổ hợp Nhật–Lương với Nhật–Nguyệt. Các câu đã biết này được sửa/đánh dấu chưa xác minh; không vì vậy coi toàn bộ tư liệu cũ đã được hiệu đính. Nguồn cổ/bản dịch vẫn cần kiểm tra từng trích dẫn và từng điều kiện.

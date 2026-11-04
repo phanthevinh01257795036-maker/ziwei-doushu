@@ -164,6 +164,7 @@ export interface ReportSection {
   gap: string | null;
 }
 export interface Report {
+  interpretationComplete: false;
   version: string;
   facts: ChartFacts;
   sections: ReportSection[];

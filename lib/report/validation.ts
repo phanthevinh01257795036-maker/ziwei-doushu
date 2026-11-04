@@ -1,3 +1,4 @@
+import { ruleIssues } from "./catalogue-audit";
 import type { Assessment, ChartFacts, Predicate, Rule } from "./types";
 import { palaceVi, starVi } from "./locale";
 interface TestResult {
@@ -73,6 +74,14 @@ export function validateRule(f: ChartFacts, r: Rule): Assessment {
       status: "GENERAL_REFERENCE",
       evidence,
       reasons: ["Kiến thức chung, không đưa vào kết luận cá nhân."],
+    };
+  const catalogueErrors = ruleIssues(r);
+  if (catalogueErrors.length)
+    return {
+      rule: r,
+      status: "UNVERIFIED",
+      evidence,
+      reasons: catalogueErrors,
     };
   if (
     r.verification !== "tested" ||

@@ -189,6 +189,28 @@ test("Explicit status model, no keyword validation", () => {
     "unknown",
   );
 });
+test("Malformed or impossible predicates never become personal conclusions", () => {
+  const baseRule = RULES.find((r) => r.id === "career-fu")!;
+  assert.equal(
+    validateRule(f, {
+      ...baseRule,
+      conditions: [{ kind: "resident", palace: "命宫", stars: [] }],
+    }).status,
+    "UNVERIFIED",
+  );
+  for (const [star, hua] of [
+    ["七杀", "禄"],
+    ["天梁", "忌"],
+  ])
+    assert.equal(
+      validateRule(f, {
+        ...baseRule,
+        conditions: [{ kind: "hua", palace: "命宫", star, hua }],
+      }).status,
+      "UNVERIFIED",
+    );
+  assert.equal(interpret(f).interpretationComplete, false);
+});
 test("Semantic dedup chooses authored priority, never adds text", () => {
   const p = f.palaces.find((p) => p.name === "命宫")!;
   const seed = RULES[0];

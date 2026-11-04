@@ -1,3 +1,8 @@
+import {
+  MAJOR_GLOSSARY,
+  MAJOR_GLOSSARY_NOTE,
+  MAJOR_GLOSSARY_SOURCE,
+} from "../../content/vi/major-glossary";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import {
@@ -145,6 +150,7 @@ export function renderPdf(r: Report, fontBase64: string): Uint8Array {
   y = 53;
   line("TỬ VI ĐẨU SỐ", 28, "#8b3027");
   line("Lá số và báo cáo tham khảo", 17);
+  line("BẢN NỘI DUNG CHƯA ĐẦY ĐỦ", 12, "#8b3027");
   y += 12;
   line(
     `${f.normalized.civilSolar.day}/${f.normalized.civilSolar.month}/${f.normalized.civilSolar.year} · ${String(f.normalized.input.hour).padStart(2, "0")}:${String(f.normalized.input.minute).padStart(2, "0")} · ${f.normalized.input.gender === "male" ? "Nam" : "Nữ"}`,
@@ -366,6 +372,13 @@ export function renderPdf(r: Report, fontBase64: string): Uint8Array {
   }
   section("Phụ lục C. Thuật ngữ và phiên bản");
   rows(["Thuật ngữ", "Giải thích"], GLOSSARY);
+  heading("Từ khóa 14 chính tinh — kiến thức chung", 2);
+  line(MAJOR_GLOSSARY_NOTE, 9);
+  rows(
+    ["Chính tinh", "Từ khóa Việt", "Từ khóa gốc"],
+    MAJOR_GLOSSARY.map((s) => [s.nameVi, s.textVi, s.original]),
+  );
+  line(MAJOR_GLOSSARY_SOURCE, 8);
   line(f.algorithmVersion, 9);
   line(
     `Quy tắc ${f.contentVersion}; báo cáo ${r.version}; bảng ${f.school}; dữ liệu v4.0 ca268829f7a9 / XD2.`,

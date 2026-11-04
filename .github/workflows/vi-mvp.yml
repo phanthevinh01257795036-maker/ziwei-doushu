@@ -17,6 +17,8 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: npm run typecheck
       - run: npm run test:vi
+      - run: npm run test:content
+      - run: npm run audit:content
       - name: Verify preserved Next.js routes
         run: npm run build
       - run: npm run build:vi
