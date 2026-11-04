@@ -159,6 +159,11 @@ export function normalizeBirth(input: BirthInput): NormalizedBirth {
     throw new Error("Ngày sau hiệu chỉnh nằm ngoài phạm vi 1900–2050.");
   const notices: Notice[] = [
     {
+      id: "lunar-calendar",
+      text: "Âm lịch theo thuật toán gốc và lunar-javascript. Múi giờ UTC+7 đã được xử lý riêng; chưa kiểm chứng lịch âm thiên văn Việt Nam cho mọi ngày.",
+      confirm: false,
+    },
+    {
       id: "place",
       text: "Địa danh được giữ nguyên như bạn nhập, gồm tên cũ. MVP chưa có cơ sở địa danh toàn quốc hoặc xác minh địa chỉ; hãy kiểm tra không nhầm nơi trùng tên.",
       confirm: true,

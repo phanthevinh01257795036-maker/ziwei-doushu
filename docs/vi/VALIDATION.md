@@ -51,3 +51,17 @@ Bao gồm npm ci, typecheck, test:vi, **build Next.js giữ các route cũ**, bu
 Biên bản chi tiết tại SEMANTIC-REVIEW.md. Giữ 11 mục sau rà soát/giới hạn nghĩa (10 mục theo điều kiện, 1 chú giải); tạm khóa 19 mục vì mẩu nguồn không đủ hỗ trợ toàn bộ câu Việt hoặc còn thiếu điều kiện. Các mục không được duyệt sẽ không xuất thành kết luận dù điều kiện sao–cung khớp. Nếu thay văn bản, nguồn hoặc điều kiện, snapshot duyệt không còn khớp và mục phải được duyệt lại.
 
 Đây là rà soát của trợ lý phát triển, chưa phải hiệu đính độc lập hoặc bảo đảm dự đoán đúng thực tế. Không coi các trích dẫn v4.0 là bản cổ đã được kiểm chứng độc lập. Typecheck, bộ kiểm MVP/hồ sơ riêng và bài kiểm duyệt ngữ nghĩa đạt; bản tĩnh build thành công. PDF mẫu mới 27 trang A4, kiểm độc lập không trang trắng bất thường/ký tự thay thế/văn bản tràn. Kiểm trình duyệt tải PDF, 12 cung/14 mục, mobile và không yêu cầu ra ngoài đạt.
+
+
+## Gia cố sau rà soát bản ghi thực tế — report-1.2.0
+
+- Chặn điều kiện không nhận diện, quan hệ viết sai, danh sách sao/độ sáng sai kiểu ngay tại hàm kiểm tra điều kiện. Không diễn giải quan hệ lạ thành mượn sao.
+- Kiểm thử trên lưới lá số tổng hợp: sao mượn không thành sao tọa thủ, kể cả khi ghép với phụ tinh thực trong cung. Không lưu hồ sơ khách làm fixture công khai.
+- Loại mọi nhận định còn conflictGroup khỏi phần tổng hợp cá nhân; chỉ ghi ở mục khác biệt. Độ ưu tiên và khử trùng lặp không được dùng để phân xử nội dung mâu thuẫn.
+- Biên nhận v4.0 phải khớp khóa và toàn bộ trường sinh, manifest/checksum/phiên bản, trạng thái UNVERIFIED và chính tinh Mệnh thực tế. Kiểm tra tại đầu vào báo cáo và trước khi cache tệp đã tải. Đây là kiểm tra tính nhất quán, không xác nhận đúng nghĩa của văn bản nguồn.
+- Bộ dò cũ chỉ ghi Hỏa/Linh tam hợp hoặc đối chiếu Tham Lang là quan hệ cấu trúc trung tính; không gắn thành cách đồng cung hay bảo đảm hoành tài. Trường hợp đồng cung vẫn ghi rõ chưa đối chiếu cổ thư độc lập.
+- Cảnh báo lịch âm gốc và giới hạn đối chiếu lịch Việt Nam xuất hiện trước khi lập lá số và trong báo cáo.
+
+Độ bao phủ nội dung không tăng bằng cách nới điều kiện: vẫn 30 mục, 11 mục được giữ sau rà soát (gồm chú giải), 19 mục tạm khóa; 7/168 ô có quy tắc theo điều kiện. Chưa đủ để cam kết luận giải hoàn chỉnh mọi lá số hoặc công bố bản thương mại đã nghiệm thu. Không triển khai công khai và không merge main trong đợt sửa này.
+
+Kết quả đợt sửa: typecheck, test:vi (15 nhóm), test:content, toàn bộ npm test gốc (gồm 768 lá số kiểm toàn vẹn), build:vi và test trình duyệt với Chromium hệ thống đều đạt. PDF được kiểm độc lập 27 trang A4, không trang trắng bất thường, không ký tự thay thế/tràn chữ, font có tiếng Việt và chữ Hán. Hồ sơ riêng được kiểm từ tệp ngoài repository: biên nhận nguồn đúng lá số; bốn chính tinh mượn tại hai cung rỗng không thành tọa thủ; thêm nguồn không làm thay đổi kết luận. Không đưa tệp riêng vào commit.

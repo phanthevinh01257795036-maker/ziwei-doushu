@@ -11,11 +11,14 @@ for (const row of Object.values(SI_HUA_TABLE)) {
   });
 }
 export function predicateIssues(p: Predicate): string[] {
+  if (!p || typeof p !== "object" || !["unknown", "resident", "empty", "brightness", "hua", "relation"].includes(p.kind))
+    return ["Loại điều kiện không được hỗ trợ."];
   if (p.kind === "unknown") return [];
   const errors: string[] = [];
   if (!(p.palace in PALACE_VI))
     errors.push("Điều kiện dùng cung không được hỗ trợ.");
   if (p.kind === "resident") {
+    if (!Array.isArray(p.stars)) return ["Danh sách sao tọa thủ không hợp lệ."];
     if (!p.stars.length)
       errors.push("Điều kiện tọa thủ không được để danh sách sao rỗng.");
     if (new Set(p.stars).size !== p.stars.length)
@@ -27,10 +30,12 @@ export function predicateIssues(p: Predicate): string[] {
       errors.push("Điều kiện dùng sao chưa có trong danh mục.");
     if (p.kind === "hua" && !possibleHua.get(p.star)?.has(p.hua))
       errors.push("Tứ Hóa không tồn tại trong bảng thuật toán đã chọn.");
+    if (p.kind === "relation" && !["trine", "opposite", "meeting", "borrowed"].includes(p.relation))
+      errors.push("Quan hệ sao không được hỗ trợ; không tự đổi thành mượn sao.");
     if (
       p.kind === "brightness" &&
       (!["QS", "XD2"].includes(p.school) ||
-        !p.values.length ||
+        !Array.isArray(p.values) || !p.values.length ||
         p.values.some(
           (v) =>
             !["庙", "旺", "得", "利", "平", "不", "闲", "陷", "地"].includes(v),

@@ -52,6 +52,21 @@ export function checkRecord(
     throw new Error("Bản ghi không đủ 13 nhóm hoặc ms không hợp lệ.");
   return r;
 }
+/** Bind a receipt to THIS chart. A checksum verifies an asset, not its interpretation. */
+export function checkDatasetReceipt(receipt: DatasetReceipt, facts: ChartFacts): void {
+  const identity = datasetIdentity(facts);
+  const asset = manifest.years[String(identity.year) as keyof typeof manifest.years];
+  checkRecord(receipt.record, identity);
+  if (!asset || receipt.key !== identity.key || receipt.year !== identity.year ||
+      receipt.release !== manifest.release || receipt.sha256 !== asset.sha256 ||
+      receipt.contentVersion !== manifest.contentVersion || receipt.sourceSchool !== manifest.brightnessSchool ||
+      receipt.verified !== true || receipt.status !== "UNVERIFIED" || receipt.translation !== "not-translated")
+    throw new Error("Biên nhận v4.0 không khớp lá số hoặc phiên bản dữ liệu đã khóa.");
+  const ming = facts.palaces.find((p) => p.branch === facts.ming)!;
+  const firstMajor = ming.stars.find((s) => s.type === "major")?.name ?? null;
+  if (receipt.record.ms !== firstMajor)
+    throw new Error("Chính tinh Mệnh của bản ghi khác thuật toán; từ chối gắn dữ liệu.");
+}
 /** Streaming long-window Zstandard reader. Never holds a whole decompressed year in RAM. */
 export class YearScanner {
   private pending = "";

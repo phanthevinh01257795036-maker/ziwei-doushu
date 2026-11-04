@@ -1,5 +1,6 @@
 import { RULES } from "../../content/vi/rules";
 import { validateRules } from "./validation";
+import { checkDatasetReceipt } from "./v4";
 import { BRANCHES_VI, TOPICS, palaceVi, starVi, HUA_VI } from "./locale";
 import type {
   ChartFacts,
@@ -31,7 +32,7 @@ export function selectAssessments(
 ): Assessment[] {
   const best = new Map<string, Assessment>();
   for (const a of assessments
-    .filter((a) => a.status === "APPLICABLE" && a.rule.topic === id)
+    .filter((a) => a.status === "APPLICABLE" && !a.rule.conflictGroup && a.rule.topic === id)
     .sort(
       (a, b) =>
         b.rule.priority - a.rule.priority ||
@@ -46,6 +47,7 @@ export function interpret(
   dataset: DatasetReceipt | null = null,
   rules: Rule[] = RULES,
 ): Report {
+  if (dataset) checkDatasetReceipt(dataset, facts);
   const assessments = validateRules(facts, rules);
   const sections = TOPICS.map(([id, title]) => {
     const p = facts.palaces.find((p) => p.name === palaceByTopic[id])!;
@@ -99,7 +101,7 @@ export function interpret(
         `${s.title}: có ${s.paragraphs.length} nhận định khớp điều kiện; xem dẫn chứng tại mục tương ứng.`,
     );
   return {
-    version: "report-1.1.0",
+    version: "report-1.2.0",
     interpretationComplete: false,
     facts,
     sections,
@@ -122,6 +124,8 @@ export function interpret(
       "Các cách cục trong ChartFacts hiện chỉ xác nhận cấu trúc Tử Phủ/Xương Khúc thực tại Mệnh; chưa chuyển toàn bộ patterns.ts vào quy tắc Việt.",
       "Vận hạn chỉ gồm đại hạn và Tứ Hóa năm từ mã gốc. Chưa có quy tắc dự báo sự kiện theo năm/tháng, nên không tạo dự báo.",
       "Múi giờ lịch sử dùng IANA 2025b đã khóa trong moment-timezone 0.6.0. Cần cập nhật có kiểm thử nếu luật giờ thay đổi; kinh độ và địa danh cần người dùng xác nhận.",
+      "Âm lịch theo thư viện lunar-javascript của thuật toán gốc; xác nhận UTC+7 không đồng nghĩa đã kiểm chứng lịch âm thiên văn Việt Nam. Chưa xác nhận tương đương cho mọi ngày.",
+      "Nhận định có nhóm mâu thuẫn chưa phân xử chỉ được ghi ở phần khác biệt; không chọn bằng ưu tiên hoặc khử trùng lặp để đưa vào kết luận.",
       "Nguồn về sức khỏe chỉ tham khảo văn hóa, không chẩn đoán hoặc dự báo tuổi thọ.",
     ],
   };

@@ -16,6 +16,7 @@ import { RULES } from "../../content/vi/rules";
 import {
   datasetIdentity,
   checkRecord,
+  checkDatasetReceipt,
   YearScanner,
   DIMENSIONS,
   extractYear,
@@ -26,7 +27,7 @@ import {
   lunarToSolar,
   leapMonthOfLunarYear,
 } from "../../lib/ziwei/lunar-solar";
-import type { BirthInput, Rule, ChartFacts } from "../../lib/report/types";
+import type { BirthInput, Rule, ChartFacts, Predicate, DatasetReceipt } from "../../lib/report/types";
 // Synthetic fixture, no real place name or personal report is stored in the repository.
 const base: BirthInput = {
   year: 2000,
@@ -249,6 +250,61 @@ test("Semantic dedup chooses authored priority, never adds text", () => {
     selected.map((x) => x.rule.textVi),
     ["Đoạn đầy đủ"],
   );
+});
+test("Unresolved interpretations cannot win through priority or deduplication", () => {
+  const assessments = [
+    { ...RULES[0], id: "disputed", concept: "same", conflictGroup: "unresolved", priority: 999 },
+    { ...RULES[0], id: "supported", concept: "same", conflictGroup: undefined, priority: 1 },
+  ].map((rule) => ({ rule, status: "APPLICABLE" as const, evidence: [], reasons: [] }));
+  assert.deepEqual(selectAssessments(assessments, RULES[0].topic).map((a) => a.rule.id), ["supported"]);
+  assert.deepEqual(selectAssessments(assessments.slice(0, 1), RULES[0].topic), []);
+});
+test("Unknown relation names and malformed predicates fail closed", () => {
+  for (const c of [
+    { kind: "relation", palace: "命宫", star: "紫微", relation: "typo" },
+    { kind: "resident", palace: "命宫", stars: [] },
+    { kind: "resident", palace: "命宫", stars: null },
+    { kind: "unsupported", palace: "命宫" },
+    { kind: "brightness", palace: "命宫", star: "紫微", school: "QS", values: null },
+    null,
+  ]) assert.equal(testPredicate(f, c as Predicate).result, "unknown");
+});
+test("Dataset receipts must match the chart, manifest and actual Ming star", () => {
+  const id = datasetIdentity(f);
+  const asset = V4_MANIFEST.years[String(id.year) as keyof typeof V4_MANIFEST.years];
+  const receipt: DatasetReceipt = {
+    release: "v4.0-13d", key: id.key, year: id.year, sha256: asset.sha256,
+    verified: true, sourceSchool: "XD2", contentVersion: V4_MANIFEST.contentVersion,
+    status: "UNVERIFIED", translation: "not-translated",
+    record: { k: id.key, y: id.year, m: id.month, d: id.day, h: id.hour, g: id.gender,
+      ms: f.palaces.find((p) => p.branch === f.ming)!.stars.find((s) => s.type === "major")?.name ?? null,
+      t: {}, c: Object.fromEntries(DIMENSIONS.map((k) => [k, "Văn bản nguồn chưa kiểm chứng"])) },
+  };
+  checkDatasetReceipt(receipt, f);
+  assert.deepEqual(interpret(f, receipt).sections, interpret(f).sections);
+  for (const patch of [
+    { key: "other" }, { year: id.year + 1 }, { sha256: "wrong" },
+    { contentVersion: "other" }, { sourceSchool: "QS" },
+    { verified: false }, { status: "APPLICABLE" },
+    { record: { ...receipt.record, ms: "not-a-star" } },
+    { record: { ...receipt.record, d: id.day + 1 } },
+  ]) assert.throws(() => interpret(f, { ...receipt, ...patch } as DatasetReceipt));
+});
+test("Borrowing never creates resident combinations across a synthetic chart grid", () => {
+  let borrowedChecks = 0;
+  for (const year of [1984, 1990, 2000]) for (const hour of [0, 2, 10, 22]) {
+    const chart = facts({ year, hour });
+    for (const palace of chart.palaces.filter((p) => p.isEmpty)) {
+      for (const name of palace.borrowedStars ?? []) {
+        borrowedChecks++;
+        assert.equal(testPredicate(chart, { kind: "resident", palace: palace.name, stars: [name] }).result, "no");
+        assert.equal(testPredicate(chart, { kind: "relation", palace: palace.name, star: name, relation: "borrowed" }).result, "yes");
+        const local = palace.stars[0];
+        if (local) assert.equal(testPredicate(chart, { kind: "resident", palace: palace.name, stars: [name, local.name] }).result, "no");
+      }
+    }
+  }
+  assert(borrowedChecks > 0);
 });
 test("Semantic review is bound to exact text and source, and unreviewed content fails closed", () => {
   const r = RULES.find((r) => r.id === "ming-empty")!;

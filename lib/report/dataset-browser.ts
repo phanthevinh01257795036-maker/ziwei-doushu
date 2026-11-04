@@ -1,4 +1,4 @@
-import { datasetIdentity, V4_MANIFEST } from "./v4";
+import { checkDatasetReceipt, datasetIdentity, V4_MANIFEST } from "./v4";
 import type { ChartFacts, DatasetReceipt } from "./types";
 const CACHE = "ziwei-v4-compressed-1";
 export async function loadDataset(
@@ -81,6 +81,7 @@ export async function loadDataset(
       };
       worker.postMessage({ buffer, identity }, [buffer]);
     });
+    checkDatasetReceipt(receipt, facts);
     // Cache contains only public compressed annual data, never the visitor's birth or report.
     try {
       await cache?.put(cacheKey, new Response(blob));

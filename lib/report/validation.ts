@@ -1,5 +1,5 @@
 import { contentReviewMatches } from "../../content/vi/review";
-import { ruleIssues } from "./catalogue-audit";
+import { predicateIssues, ruleIssues } from "./catalogue-audit";
 import type { Assessment, ChartFacts, Predicate, Rule } from "./types";
 import { palaceVi, starVi } from "./locale";
 interface TestResult {
@@ -7,6 +7,8 @@ interface TestResult {
   evidence: string;
 }
 export function testPredicate(f: ChartFacts, c: Predicate): TestResult {
+  const errors = predicateIssues(c);
+  if (errors.length) return { result: "unknown", evidence: errors.join(" ") };
   if (c.kind === "unknown") return { result: "unknown", evidence: c.reason };
   const p = f.palaces.find((p) => p.name === c.palace);
   if (!p) return { result: "unknown", evidence: "Không có cung được yêu cầu." };
