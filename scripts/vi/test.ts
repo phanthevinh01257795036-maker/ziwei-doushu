@@ -2,7 +2,11 @@ import assert from "node:assert/strict";
 import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { normalizeBirth, resolveCivil } from "../../lib/report/time";
 import { buildFacts } from "../../lib/report/facts";
-import { interpret, markdownReport } from "../../lib/report/interpret";
+import {
+  interpret,
+  markdownReport,
+  selectAssessments,
+} from "../../lib/report/interpret";
 import {
   testPredicate,
   validateRule,
@@ -170,9 +174,14 @@ test("Explicit status model, no keyword validation", () => {
     star = p.stars[0];
   const resident: Rule = {
     ...r,
+    contentReview: RULES[0].contentReview, // Unit fixture for predicate mechanics, not production approval.
     conditions: [{ kind: "resident", palace: p.name, stars: [star.name] }],
   };
-  assert.equal(validateRule(f, resident).status, "APPLICABLE");
+  assert.equal(
+    validateRule(f, resident).status,
+    "UNVERIFIED",
+    "Changing a reviewed rule does not inherit approval",
+  );
   assert.equal(
     validateRule(f, { ...resident, exclude: resident.conditions }).status,
     "CONTRADICTED",
@@ -226,11 +235,39 @@ test("Semantic dedup chooses authored priority, never adds text", () => {
     ],
   };
   const b = { ...a, id: "high", priority: 2, textVi: "Đoạn đầy đủ" };
-  const report = interpret(f, null, [a, b]);
+  // Test the pure selection layer with explicitly validated assessment fixtures.
+  const selected = selectAssessments(
+    [a, b].map((rule) => ({
+      rule,
+      status: "APPLICABLE" as const,
+      evidence: [],
+      reasons: [],
+    })),
+    "overview",
+  );
   assert.deepEqual(
-    report.sections[0].paragraphs.map((x) => x.text),
+    selected.map((x) => x.rule.textVi),
     ["Đoạn đầy đủ"],
   );
+});
+test("Semantic review is bound to exact text and source, and unreviewed content fails closed", () => {
+  const r = RULES.find((r) => r.id === "ming-empty")!;
+  assert.equal(validateRule(f, r).status, "APPLICABLE");
+  for (const changed of [
+    { ...r, textVi: r.textVi + " Sẽ giàu có." },
+    { ...r, source: { ...r.source, original: "nguồn khác" } },
+    { ...r, contentReview: undefined },
+    { ...r, conditions: [...r.conditions, ...r.conditions] },
+  ])
+    assert.equal(validateRule(f, changed).status, "UNVERIFIED");
+  const report = interpret(f);
+  for (const section of report.sections)
+    for (const p of section.paragraphs)
+      assert.equal(
+        report.assessments.find((a) => a.rule.id === p.id)?.rule.contentReview
+          ?.status,
+        "approved",
+      );
 });
 test("Same profile produces byte-identical interpretation; source cannot move stars", () => {
   const a = interpret(f),

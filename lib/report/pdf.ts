@@ -367,6 +367,14 @@ export function renderPdf(r: Report, fontBase64: string): Uint8Array {
     line(a.rule.source.title + "; " + a.rule.source.locator, 9);
     line("Nguồn: " + a.rule.source.url, 8);
     line("Nguyên văn nguồn: " + a.rule.source.original, 9);
+    line(
+      "Duyệt nội dung: " +
+        (a.rule.contentReview?.status ?? "chưa duyệt") +
+        "; " +
+        (a.rule.contentReview?.note ?? "Chưa có biên bản"),
+      9,
+    );
+    line("Chưa được hiệu đính độc lập.", 8);
     for (const e of a.evidence) line("Dữ kiện: " + e, 8);
     for (const reason of a.reasons) line("Lý do: " + reason, 9);
   }

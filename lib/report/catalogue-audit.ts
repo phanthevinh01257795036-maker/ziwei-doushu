@@ -1,3 +1,4 @@
+import { contentReviewMatches } from "../../content/vi/review";
 import { SI_HUA_TABLE } from "../ziwei/constants";
 import { PALACE_VI, STAR_VI } from "./locale";
 import type { Predicate, Rule } from "./types";
@@ -74,6 +75,7 @@ export function auditCatalogue(rules: Rule[]) {
         (r) =>
           r.kind === "interpretation" &&
           r.verification === "tested" &&
+          contentReviewMatches(r) &&
           !ruleIssues(r).length &&
           r.conditions.some(
             (p) =>
@@ -95,6 +97,12 @@ export function auditCatalogue(rules: Rule[]) {
   return {
     schemaVersion: "1",
     rules: rules.length,
+    contentReview: {
+      approved: rules.filter((r) => r.contentReview?.status === "approved")
+        .length,
+      held: rules.filter((r) => r.contentReview?.status !== "approved").length,
+      independentReview: false,
+    },
     issues,
     cells,
     totalCells: cells.length,

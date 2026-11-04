@@ -45,3 +45,9 @@ Bao gồm npm ci, typecheck, test:vi, **build Next.js giữ các route cũ**, bu
 - Thêm 14 mục từ khóa Việt–Trung đúng nguyên văn constants.ts, chỉ là kiến thức chung, không tính thành 14 quy tắc cá nhân.
 - Report.interpretationComplete luôn false ở phiên bản này; nhãn chưa đầy đủ hiện trong website/PDF/Markdown.
 - Typecheck, kiểm thử nội dung, kiểm thử MVP và hồ sơ riêng đạt. Chromium kiểm lại tải PDF/mobile/không yêu cầu ra ngoài đạt. PDF mẫu mới 24 trang A4, kiểm độc lập không trang trắng bất thường, ký tự thay thế hoặc văn bản tràn trang.
+
+## Rà soát 30 mục hiện có — vi-rules-1.2.0
+
+Biên bản chi tiết tại SEMANTIC-REVIEW.md. Giữ 11 mục sau rà soát/giới hạn nghĩa (10 mục theo điều kiện, 1 chú giải); tạm khóa 19 mục vì mẩu nguồn không đủ hỗ trợ toàn bộ câu Việt hoặc còn thiếu điều kiện. Các mục không được duyệt sẽ không xuất thành kết luận dù điều kiện sao–cung khớp. Nếu thay văn bản, nguồn hoặc điều kiện, snapshot duyệt không còn khớp và mục phải được duyệt lại.
+
+Đây là rà soát của trợ lý phát triển, chưa phải hiệu đính độc lập hoặc bảo đảm dự đoán đúng thực tế. Không coi các trích dẫn v4.0 là bản cổ đã được kiểm chứng độc lập. Typecheck, bộ kiểm MVP/hồ sơ riêng và bài kiểm duyệt ngữ nghĩa đạt; bản tĩnh build thành công. PDF mẫu mới 27 trang A4, kiểm độc lập không trang trắng bất thường/ký tự thay thế/văn bản tràn. Kiểm trình duyệt tải PDF, 12 cung/14 mục, mobile và không yêu cầu ra ngoài đạt.

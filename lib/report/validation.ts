@@ -1,3 +1,4 @@
+import { contentReviewMatches } from "../../content/vi/review";
 import { ruleIssues } from "./catalogue-audit";
 import type { Assessment, ChartFacts, Predicate, Rule } from "./types";
 import { palaceVi, starVi } from "./locale";
@@ -124,6 +125,15 @@ export function validateRule(f: ChartFacts, r: Rule): Assessment {
       reasons.push("Đã gặp điều kiện loại trừ.");
     }
     if (t.result === "unknown") unknown = true;
+  }
+  if (!contradicted && !unknown && !contentReviewMatches(r)) {
+    reasons.push(
+      r.contentReview?.status === "approved"
+        ? "Nội dung hoặc điều kiện đã đổi so với bản được duyệt; phải duyệt lại."
+        : (r.contentReview?.note ??
+            "Chưa duyệt độ trung thành với nguồn và điều kiện của lời luận."),
+    );
+    return { rule: r, status: "UNVERIFIED", evidence, reasons };
   }
   return {
     rule: r,

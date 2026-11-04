@@ -25,6 +25,22 @@ const palaceByTopic: Partial<Record<Topic, string>> = {
   spirit: "福德",
   health: "疾厄",
 };
+export function selectAssessments(
+  assessments: Assessment[],
+  id: Topic,
+): Assessment[] {
+  const best = new Map<string, Assessment>();
+  for (const a of assessments
+    .filter((a) => a.status === "APPLICABLE" && a.rule.topic === id)
+    .sort(
+      (a, b) =>
+        b.rule.priority - a.rule.priority ||
+        (a.rule.id < b.rule.id ? -1 : a.rule.id > b.rule.id ? 1 : 0),
+    ))
+    if (!best.has(a.rule.concept)) best.set(a.rule.concept, a);
+
+  return [...best.values()];
+}
 export function interpret(
   facts: ChartFacts,
   dataset: DatasetReceipt | null = null,
@@ -50,22 +66,13 @@ export function interpret(
       factTexts.push(
         `Thân tại ${BRANCHES_VI[facts.shen]}, cư ${palaceVi(facts.palaces.find((p) => p.branch === facts.shen)!.name)}.`,
       );
-    // Deterministic semantic deduplication uses authored concepts, never keyword similarity.
-    const best = new Map<string, Assessment>();
-    for (const a of assessments
-      .filter((a) => a.status === "APPLICABLE" && a.rule.topic === id)
-      .sort(
-        (a, b) =>
-          b.rule.priority - a.rule.priority ||
-          (a.rule.id < b.rule.id ? -1 : a.rule.id > b.rule.id ? 1 : 0),
-      ))
-      if (!best.has(a.rule.concept)) best.set(a.rule.concept, a);
-    const paragraphs = [...best.values()].map((a) => ({
+    const paragraphs = selectAssessments(assessments, id).map((a) => ({
       id: a.rule.id,
       text: a.rule.textVi,
       source: a.rule.source,
       evidence: a.evidence,
       tone: a.rule.tone,
+      review: a.rule.contentReview,
     }));
     return {
       id,
@@ -109,7 +116,8 @@ export function interpret(
     dataset,
     limits: [
       "MVP chỉ dùng tập quy tắc Việt tĩnh đã hình thức hóa; chưa dịch và xác minh toàn bộ 674.976 bản ghi v4.0.",
-      "APPLICABLE xác nhận điều kiện sao/cung, không chứng minh dự đoán tử vi đúng thực tế.",
+      "APPLICABLE đòi khớp điều kiện và bản nội dung có biên bản duyệt gắn đúng văn bản/nguồn; không chứng minh dự đoán tử vi đúng thực tế.",
+      "Biên bản duyệt hiện do trợ lý phát triển thực hiện, chưa phải hiệu đính độc lập của chuyên gia hoặc đối chiếu bản cổ đầy đủ.",
       "Văn bản tự do v4.0 luôn UNVERIFIED; không được đưa nguyên khối vào kết luận cá nhân. Từ khóa không phải phép kiểm chứng.",
       "Các cách cục trong ChartFacts hiện chỉ xác nhận cấu trúc Tử Phủ/Xương Khúc thực tại Mệnh; chưa chuyển toàn bộ patterns.ts vào quy tắc Việt.",
       "Vận hạn chỉ gồm đại hạn và Tứ Hóa năm từ mã gốc. Chưa có quy tắc dự báo sự kiện theo năm/tháng, nên không tạo dự báo.",

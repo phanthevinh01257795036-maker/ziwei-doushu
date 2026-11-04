@@ -861,6 +861,10 @@ export default function ViApp({ assetBase = "/" }: { assetBase?: string }) {
                         {p.source.title} · {p.source.locator}
                       </p>
                       <p>Nguyên văn: {p.source.original}</p>
+                      <p>
+                        Duyệt nội dung: {p.review?.note ?? "Chưa có biên bản"}{" "}
+                        Chưa có hiệu đính độc lập.
+                      </p>
                       <ul>
                         {p.evidence.map((e) => (
                           <li key={e}>{e}</li>

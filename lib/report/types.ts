@@ -126,6 +126,7 @@ export interface Source {
   url: string;
 }
 export interface Rule {
+  contentReview?: import("../../content/vi/review").ContentReview;
   id: string;
   topic: Topic;
   kind: "interpretation" | "pattern" | "reference";
@@ -160,6 +161,7 @@ export interface ReportSection {
     source: Source;
     evidence: string[];
     tone: string;
+    review?: import("../../content/vi/review").ContentReview;
   }[];
   gap: string | null;
 }

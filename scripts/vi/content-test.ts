@@ -1,3 +1,4 @@
+import { CONTENT_REVIEW, contentReviewMatches } from "../../content/vi/review";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { RULES } from "../../content/vi/rules";
@@ -67,6 +68,42 @@ assert(ruleIssues(invalid).length > 0);
 const legacy = readFileSync("components/StarDetailPanel.tsx", "utf8");
 assert(!legacy.includes("天梁最怕化忌"));
 assert(!legacy.includes("七杀化禄后反为吉"));
+
+// All current IDs have explicit manual review; being mentioned in a source is not approval.
+
+assert.deepEqual(
+  Object.keys(CONTENT_REVIEW).sort(),
+  RULES.map((r) => r.id).sort(),
+);
+assert.equal(
+  RULES.filter((r) => r.contentReview?.status === "approved").length,
+  11,
+);
+assert.equal(
+  RULES.filter((r) => r.contentReview?.status === "hold").length,
+  19,
+);
+for (const rule of RULES) {
+  assert.equal(
+    contentReviewMatches(rule),
+    rule.contentReview?.status === "approved",
+    rule.id,
+  );
+  if (rule.contentReview?.status === "approved") {
+    assert.equal(
+      contentReviewMatches({ ...rule, textVi: rule.textVi + " thay đổi" }),
+      false,
+    );
+    assert.equal(
+      contentReviewMatches({
+        ...rule,
+        source: { ...rule.source, original: "khác" },
+      }),
+      false,
+    );
+  }
+}
+
 console.log(
   `Content audit passed: ${audit.cellsWithRules}/168 cells have conditional rules; 14 glossary entries are references, not personal interpretations.`,
 );

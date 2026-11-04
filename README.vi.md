@@ -2,7 +2,7 @@
 
 Luồng MVP mới dùng bộ an sao hiện có và tập quy tắc Việt tĩnh. Chạy hoàn toàn trong trình duyệt, tạo PDF thật có thể tải, không cần tài khoản hoặc khóa API. Chưa triển khai website công khai và không tự merge vào main.
 
-**Giới hạn quan trọng:** hiện có 30 quy tắc Việt, hai cách cục xác nhận về cấu trúc, 14 mục báo cáo. Độ bao phủ tùy lá số; có hồ sơ không khớp quy tắc nào. Số bản ghi v4.0 có bản dịch Việt đầy đủ được công bố là **0**. Không đưa nguyên văn v4.0 vào kết luận cá nhân. Xem [khảo sát](docs/vi/AUDIT.md), [kiến trúc](docs/vi/ARCHITECTURE.md), [quy tắc](docs/vi/RULES.md).
+**Giới hạn quan trọng:** hiện có 30 quy tắc Việt trong danh mục; sau [rà soát ngữ nghĩa](docs/vi/SEMANTIC-REVIEW.md), 11 mục được giữ (gồm 1 chú giải chung), 19 mục tạm khóa vì thiếu nguồn/điều kiện đầy đủ. Đây chưa phải hiệu đính độc lập. Có hai cách cục xác nhận về cấu trúc, 14 mục báo cáo. Độ bao phủ tùy lá số; có hồ sơ không khớp quy tắc nào. Số bản ghi v4.0 có bản dịch Việt đầy đủ được công bố là **0**. Không đưa nguyên văn v4.0 vào kết luận cá nhân. Xem [khảo sát](docs/vi/AUDIT.md), [kiến trúc](docs/vi/ARCHITECTURE.md), [quy tắc](docs/vi/RULES.md).
 
 ## Dành cho người không biết lập trình
 

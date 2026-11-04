@@ -1,9 +1,10 @@
+import { applyContentReview } from "./review";
 import type { Predicate, Rule, Source, Topic } from "../../lib/report/types";
 const root = "https://github.com/Renhuai123/ziwei-doushu/releases/tag/v4.0-13d";
 /** Small, explicit corpus. No personal records, no lecture excerpts, no runtime translation. */
 const source = (id: string, locator: string, original: string): Source => ({
   id,
-  title: "Tử Vi Đẩu Số Toàn Thư — trích dẫn công bố trong dữ liệu v4.0",
+  title: "Tư liệu v4.0 — đoạn nguồn (chưa đối chiếu độc lập bản cổ)",
   locator,
   original,
   license: "CC-BY-4.0",
@@ -390,3 +391,14 @@ for (const [palace, star, hua, topic, text] of [
       },
     ),
   );
+
+// Semantic review is separate from predicate validation, and defaults to hold.
+for (let i = 0; i < RULES.length; i++) {
+  RULES[i] = applyContentReview(RULES[i]);
+  if (RULES[i].id === "spirit-zi-po")
+    RULES[i].source = {
+      ...RULES[i].source,
+      locator: "v4.0 — Phúc Đức — hai mục Tử Vi và Phá Quân riêng",
+      original: "Mục Tử Vi: 破军同劳心费力不安\nMục Phá Quân: 紫微同安乐",
+    };
+}

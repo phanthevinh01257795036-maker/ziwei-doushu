@@ -5,7 +5,7 @@ import { normalizeBirth, requireAcknowledgements } from "./time";
 import type { BirthInput, ChartFacts } from "./types";
 export const ALGORITHM_VERSION =
   "upstream-a600484a49255039d0725f1ba9e11ca81a948f97+facts-1.0.0";
-export const CONTENT_VERSION = "vi-rules-1.1.0";
+export const CONTENT_VERSION = "vi-rules-1.2.0";
 function freeze<T>(v: T): T {
   if (v && typeof v === "object") {
     Object.values(v).forEach(freeze);
