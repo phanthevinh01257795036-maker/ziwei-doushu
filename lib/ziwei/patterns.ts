@@ -242,6 +242,21 @@ function detectHuoTanLingTan(chart: ZiweiChart, ming: Palace, patterns: Pattern[
     if (!sameOrTrine) continue;
     if (!isInSanFang(chart, tan.branch)) continue;
 
+    // A meeting is not co-residence. Keep the geometry visible without
+    // promoting a broad meeting to a classical pattern or a wealth prediction.
+    if (tan.branch !== shaPalace.branch) {
+      const relation = (tan.branch + 6) % 12 === shaPalace.branch ? '对照' : '三合';
+      patterns.push({
+        name: `贪狼${relation}${shaName}（结构）`,
+        level: 'neutral',
+        description: `贪狼与${shaName}${relation}，并非同宫。这里只确认位置关系，不据此认定火贪／铃贪成格，也不推断横财。`,
+        palaces: [tan.name, shaPalace.name],
+        conditions: { required: [`贪狼与${shaName}${relation}，非同宫`] },
+        source: '盘面位置关系；非古籍格局认定',
+      });
+      continue;
+    }
+
     const required = [`贪狼${tan.branch === shaPalace.branch ? '同宫' : '会照'}${shaName}`, '贪狼会照命宫三方'];
     const bonus: string[] = [];
     const breaking: string[] = [];
@@ -253,7 +268,7 @@ function detectHuoTanLingTan(chart: ZiweiChart, ming: Palace, patterns: Pattern[
     patterns.push({
       name: shaName === '火星' ? '火贪格' : '铃贪格',
       level: breaking.length ? 'good' : 'excellent',
-      description: `贪狼遇${shaName}${tan.branch === shaPalace.branch ? '同宫' : '三方会照'}，主突发横财、突如其来的机遇。古书云“贪狼遇火铃，必发横财”，但来得快去得也快，宜见好就收。${breaking.length ? '本盘破格条件已触发，发力打折。' : ''}`,
+      description: `贪狼与${shaName}同宫，符合本程序的同宫结构条件。相关传统论法涉及机遇与变动，但古籍条件与出处尚需独立核对，不能据此保证横财。${breaking.length ? '另有本程序记录的破格条件。' : ''}`,
       palaces: [tan.name, shaPalace.name],
       conditions: { required, bonus, breaking },
       source: '《紫微斗数骨髓赋》',

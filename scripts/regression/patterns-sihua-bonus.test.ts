@@ -41,6 +41,24 @@ function sanFangHasSiHua(chart: ZiweiChart, hua: SiHua): boolean {
 async function main() {
 const { detectPatterns } = await import('../../lib/ziwei/patterns');
 
+// Synthetic geometry isolates the co-residence vs trine/opposition distinction.
+for (const [sha, branch] of [['火星', 4], ['铃星', 6]] as const) {
+  const geometry = generateChart({ year: 2000, month: 1, day: 1, hour: 0, gender: 'male' });
+  geometry.mingGongBranch = 0;
+  for (const p of geometry.palaces) p.stars = [];
+  geometry.palaces.find(p => p.branch === 0)!.stars.push({ name: '贪狼', type: 'major', brightness: 'normal' });
+  geometry.palaces.find(p => p.branch === branch)!.stars.push({ name: sha, type: 'minor', brightness: 'normal' });
+  const found = detectPatterns(geometry);
+  assert(!found.some(p => p.name === '火贪格' || p.name === '铃贪格'));
+  const structural = found.find(p => p.name.includes(sha) && p.name.includes('结构'));
+  assert(structural);
+  assert.equal(structural.level, 'neutral');
+  assert(structural.description.includes('并非同宫'));
+  geometry.palaces.find(p => p.branch === 0)!.stars.push(...geometry.palaces.find(p => p.branch === branch)!.stars);
+  geometry.palaces.find(p => p.branch === branch)!.stars = [];
+  assert(detectPatterns(geometry).some(p => p.name === (sha === '火星' ? '火贪格' : '铃贪格')));
+}
+
 // 盘上不存在名为「化X」的星
 const sample = generateChart({ year: 1988, month: 10, day: 8, hour: 7, gender: 'male' });
 assert.ok(sample.palaces.every(p => p.stars.every(s => !/^化[禄权科忌]$/.test(s.name))), '星名里出现了「化X」');

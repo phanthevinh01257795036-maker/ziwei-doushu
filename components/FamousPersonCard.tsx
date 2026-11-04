@@ -57,7 +57,7 @@ export default function FamousPersonCard({ person }: { person: FamousPerson }) {
         </div>
 
         <div className="text-[10px] mt-2" style={{ color: 'var(--t-faint)', opacity: 0.6, lineHeight: 1.5 }}>
-          ⚠️ 出生时辰为公开文献估算值，仅供研究参考。下方 AI 解读基于此命盘自动生成，与本人无关。
+          ⚠️ 出生时辰为公开文献估算值，仅供研究参考。Giờ sinh mẫu chỉ để tham khảo, không phải dữ kiện đã xác minh.
         </div>
       </div>
     </motion.div>

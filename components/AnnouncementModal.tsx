@@ -122,7 +122,7 @@ export default function AnnouncementModal() {
               <div style={{ fontSize: '14px', color: '#8b3a1a', fontWeight: 600, lineHeight: 1.6 }}>
                 <span style={{ fontSize: '16px', color: '#c45a2d', fontWeight: 700 }}>5 月 1 日 — 5 月 8 日</span>
                 <br />
-                平台全部功能 + AI 提问 全部免费开放
+                平台全部功能 + 查阅知识 全部免费开放
               </div>
             </div>
 
@@ -139,7 +139,7 @@ export default function AnnouncementModal() {
                 说实话，我真的没想到会有这么大的流量。
               </p>
               <p style={{ margin: '0 0 12px' }}>
-                最开始做这个平台，我的初心其实很简单：在 AI 时代，把倪师这套原本复杂、门槛很高的体系，尽量做得更简单、更高效、更容易理解。
+                最开始做这个平台，我的初心其实很简单：在 技术时代，把倪师这套原本复杂、门槛很高的体系，尽量做得更简单、更高效、更容易理解。
               </p>
               <p style={{ margin: '0 0 12px' }}>
                 不一定每个人都要先学很久、看很多书，才能接触这些内容。我们希望通过这个平台，让大家用更轻松的方式，获得一些对自我、人生阶段、选择方向的参考和启发。

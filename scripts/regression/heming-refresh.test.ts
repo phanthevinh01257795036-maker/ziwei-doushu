@@ -27,11 +27,12 @@ const form = { year: '1990', month: '1', day: '1', clockHour: '8', clockMinute: 
 let chartA: unknown = null;
 let chartB: unknown = null;
 let currentForm = { ...form };
-const requests: { chartA: { birthInfo: BirthInfo }; chartB: { birthInfo: BirthInfo } }[] = [];
+const requests: unknown[] = [];
+const updates: { birthInfo: BirthInfo }[] = [];
 const context = () => ({
   chartA, chartB, formA: currentForm, formB: { ...form, name: 'B' }, formToBirthInfo,
   generateChart: async (birthInfo: BirthInfo) => ({ birthInfo }),
-  setChartA: (value: unknown) => { chartA = value; },
+  setChartA: (value: unknown) => { chartA = value; updates.push(value as { birthInfo: BirthInfo }); },
   setChartB: (value: unknown) => { chartB = value; },
   setFormError: noop, setAnalyzing: noop, setAnalysis: noop, setAnalysisError: noop,
   setApiMissing: noop, analysisRef: { current: null },
@@ -44,10 +45,10 @@ async function main() {
   await moduleExports.makeRun(context())();
   currentForm = { ...form, year: '1991' };
   await moduleExports.makeRun(context())();
-  assert.equal(requests.length, 2);
-  assert.equal(requests[0].chartA.birthInfo.year, 1990);
-  assert.equal(requests[1].chartA.birthInfo.year, 1991, 'the second request must use edited birth data');
-  assert.equal(requests[1].chartB.birthInfo.name, 'B');
+  assert.equal(requests.length, 0, 'offline mode never sends birth information');
+  assert.equal(updates[0].birthInfo.year, 1990);
+  assert.equal(updates[1].birthInfo.year, 1991, 'the second request must use edited birth data');
+  assert.equal((chartB as {birthInfo:BirthInfo}).birthInfo.name, 'B');
   console.log('Heming edited-form request regression passed');
 }
 main().catch(error => { console.error(error); process.exitCode = 1; });

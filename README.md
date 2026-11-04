@@ -1,3 +1,5 @@
+> **Vietnamese offline MVP:** [README.vi.md](./README.vi.md). The default page now generates rule-checked Vietnamese PDF reports locally, without inference services or API keys. The upstream documentation below describes the original snapshot; its instructions to add inference endpoints do not apply to this branch.
+
 <div align="center">
 
 # 紫微斗数 · 开源排盘引擎

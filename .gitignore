@@ -7,3 +7,16 @@ dist/
 *.tsbuildinfo
 .DS_Store
 node_modules
+
+# Dữ liệu năm và báo cáo cá nhân tuyệt đối không commit
+.private/
+reports/
+artifacts/
+*.jsonl
+*.jsonl.zst
+*.pdf
+*.docx
+public/v4-worker.js
+public/v4-worker.js.map
+playwright-report/
+test-results/
